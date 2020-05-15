@@ -20,6 +20,8 @@ def dumpldap(ip, port, ssl, domain, ofile='', user='', pwd=''):
                     f.close()
         except:
             print("ERROR: Check the domain")
+            usage()
+            sys.exit(2)
     else:
         print(connection.last_error)
 
