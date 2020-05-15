@@ -1,4 +1,3 @@
-#Python3
 #!/usr/bin/python
 # 
 import sys, getopt, ldap3, os
@@ -11,19 +10,23 @@ def dumpldap(ip, port, ssl, domain, ofile='', user='', pwd=''):
     server = ldap3.Server(ip, get_info=ldap3.ALL, port=port, use_ssl=ssl)
     connection = ldap3.Connection(server, user=user, password=pwd)
     if connection.bind():
-        if connection.search(search_base=domain, search_scope='SUBTREE', attributes='*', search_filter='(&(objectClass=person))'):
-            if ofile == "":
-                print(connection.entries)
-            else:
-                f = open(ofile, 'w')
-                f.write(str(connection.entries))
-                f.close()
+        try:
+            if connection.search(search_base=domain, search_scope='SUBTREE', attributes='*', search_filter='(&(objectClass=person))'):
+                if ofile == "":
+                    print(connection.entries)
+                else:
+                    f = open(ofile, 'w')
+                    f.write(str(connection.entries))
+                    f.close()
+        except:
+            print("ERROR: Check the domain")
     else:
         print(connection.last_error)
 
 def usage():
     print(os.path.basename(__file__) + ' -d <domain> -i <ip> -p <Port> -s <True|False> -o <outputfile>')
     print(os.path.basename(__file__) + ' --domain <domain> --ip <ip> --port <Port> --ssl <True|False> --ofile <outputfile>')
+    print(os.path.basename(__file__) + ' -d "DC=MYDOMAIN,DC=LOCAL" -i 192.168.0.1 -p 389 -s False -o MyLdapDump')
 
 def main(argv):
     domain = ''
